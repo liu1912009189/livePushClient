@@ -31,6 +31,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     private VideoConfiguration mVideoConfiguration;
     private RtmpSender mRtmpSender;
     private int mCurrentBps;
+    private boolean isStreamInterupt;
     /**
      * 当前直播间状态是否为正在播,即是否手动点击开播且成功
      */
@@ -80,6 +81,10 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
 
     public boolean isLiveStatus() {
         return liveStatus;
+    }
+
+    public boolean isStreamInterupt(){
+        return isStreamInterupt;
     }
 
     public void setLiveStatus(boolean liveStatus) {
@@ -175,6 +180,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
             HttpUtils.changeLiveroomState(rtmpUrl, "1", null);
             mLivePresenter.setStartStatus(true);
             mLiveCameraView.start();
+            isStreamInterupt = false;
         }
 
         @Override
@@ -183,6 +189,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
             isRecording = false;
             mLiveUI.setRoomStatus(false);
             Toast.makeText(getApplicationContext(), R.string.network_error_retry, Toast.LENGTH_SHORT).show();
+            isStreamInterupt = true;
 
         }
 

@@ -164,6 +164,10 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
 //            getTarget().stopStreaming(true);
 //            getTarget().startStream();
 //        }
+        if(getTarget().isStreamInterupt()){
+            getTarget().startLive();
+        }
+
     }
 
     @Override
