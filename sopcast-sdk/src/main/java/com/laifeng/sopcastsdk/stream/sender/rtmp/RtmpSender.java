@@ -53,7 +53,7 @@ public class RtmpSender implements Sender, SendQueueListener {
         void onConnecting();
         void onConnected();
         void onDisConnected();
-        void onPublishFail();
+        void onPublishFail(String errorMsg);
         void onNetGood();
         void onNetBad();
     }
@@ -128,7 +128,7 @@ public class RtmpSender implements Sender, SendQueueListener {
     private RtmpConnectListener listener = new RtmpConnectListener() {
         @Override
         public void onUrlInvalid() {
-            sendPublishFail();
+            sendPublishFail("onUrlInvalid");
         }
 
         @Override
@@ -138,7 +138,7 @@ public class RtmpSender implements Sender, SendQueueListener {
 
         @Override
         public void onSocketConnectFail() {
-            sendPublishFail();
+            sendPublishFail("onSocketConnectFail");
         }
 
         @Override
@@ -148,7 +148,7 @@ public class RtmpSender implements Sender, SendQueueListener {
 
         @Override
         public void onHandshakeFail() {
-            sendPublishFail();
+            sendPublishFail("onHandshakeFail");
         }
 
         @Override
@@ -158,7 +158,7 @@ public class RtmpSender implements Sender, SendQueueListener {
 
         @Override
         public void onRtmpConnectFail() {
-            sendPublishFail();
+            sendPublishFail("onRtmpConnectFail");
         }
 
         @Override
@@ -168,7 +168,7 @@ public class RtmpSender implements Sender, SendQueueListener {
 
         @Override
         public void onCreateStreamFail() {
-            sendPublishFail();
+            sendPublishFail("onCreateStreamFail");
         }
 
         @Override
@@ -185,7 +185,7 @@ public class RtmpSender implements Sender, SendQueueListener {
 
         @Override
         public void onPublishFail() {
-            sendPublishFail();
+            sendPublishFail("onPublishFail");
         }
 
         @Override
@@ -210,12 +210,12 @@ public class RtmpSender implements Sender, SendQueueListener {
         });
     }
 
-    public void sendPublishFail() {
+    public void sendPublishFail(final String errorMsg) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 if(mListener != null) {
-                    mListener.onPublishFail();
+                    mListener.onPublishFail(errorMsg);
                 }
             }
         });

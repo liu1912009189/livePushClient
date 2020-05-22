@@ -51,8 +51,6 @@ public class LiveUI implements View.OnClickListener {
         mExit = activity.findViewById(R.id.btn_camera_exit);
         mExit.setOnClickListener(this);
         mTvStatus = activity.findViewById(R.id.tv_status);
-
-
     }
 
     public void setRoomStatus(boolean open) {

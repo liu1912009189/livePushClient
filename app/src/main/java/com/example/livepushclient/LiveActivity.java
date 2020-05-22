@@ -1,15 +1,19 @@
 package com.example.livepushclient;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.livepushclient.bean.LiveData;
 import com.example.livepushclient.presenter.LivePresenter;
 import com.example.livepushclient.presenter.ViewUpateInterface;
 import com.example.livepushclient.util.HttpUtils;
+import com.example.livepushclient.util.StringUtil;
 import com.laifeng.sopcastsdk.camera.CameraListener;
 import com.laifeng.sopcastsdk.configuration.AudioConfiguration;
 import com.laifeng.sopcastsdk.configuration.CameraConfiguration;
 import com.laifeng.sopcastsdk.configuration.VideoConfiguration;
+import com.laifeng.sopcastsdk.entity.Size;
 import com.laifeng.sopcastsdk.stream.packer.rtmp.RtmpPacker;
 import com.laifeng.sopcastsdk.stream.sender.rtmp.RtmpSender;
 import com.laifeng.sopcastsdk.ui.CameraLivingView;
@@ -36,6 +40,8 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
      * 只有点击下播时状态才为下播状态
      */
     private boolean liveStatus;
+    private LiveData mLiveData;
+    private int width,height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,8 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         setContentView(R.layout.activity_live);
         StatusBarUtils.setTranslucentStatus(this);
         rtmpUrl = getIntent().getStringExtra("url");
+        mLiveData = getIntent().getParcelableExtra("liveData");
+        Log.e(TAG,mLiveData.toString());
 //        rtmpUrl = "rtmp://rtmp.jiangshi99.com/jiang/1?auth_key=1588844080-0-0-5192cc6cb11c580a8d47c0643fca8048";
 //        rtmpUrl = "rtmp://112.17.52.56:1935/ios/dianqu1234";
 //        rtmpUrl = "rtmp://96357.livepush.myqcloud.com/live/test?txSecret=4fbe6168eb46c8b47e08101692608790&txTime=5EC6A57F";
@@ -81,6 +89,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     private void initLiveView() {
         mLiveCameraView = findViewById(R.id.liveView);
         SopCastLog.isOpen(true);
+        HttpUtils.setBaseUrl(mLiveData.netFlag);
         mLiveCameraView.init();
         CameraConfiguration.Builder cameraBuilder = new CameraConfiguration.Builder();
         cameraBuilder.setOrientation(CameraConfiguration.Orientation.PORTRAIT)
@@ -89,7 +98,10 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLiveCameraView.setCameraConfiguration(cameraConfiguration);
 
         VideoConfiguration.Builder videoBuilder = new VideoConfiguration.Builder();
-        videoBuilder.setSize(640, 360);
+        Size size = StringUtil.parseSize(mLiveData.resolution);
+        videoBuilder.setSize(size.width, size.hight);
+        videoBuilder.setFps(Integer.parseInt(mLiveData.Fps));
+        videoBuilder.setBps(Integer.parseInt(mLiveData.minBps),Integer.parseInt(mLiveData.maxBps));
         mVideoConfiguration = videoBuilder.build();
         mLiveCameraView.setVideoConfiguration(mVideoConfiguration);
 
@@ -111,7 +123,6 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLiveCameraView.setCameraOpenListener(new CameraListener() {
             @Override
             public void onOpenSuccess() {
-                Toast.makeText(LiveActivity.this, "camera open success", Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -121,7 +132,6 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
 
             @Override
             public void onCameraChange() {
-                Toast.makeText(LiveActivity.this, "camera switch", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -131,7 +141,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLiveCameraView.setPacker(packer);
         //设置发送器
         mRtmpSender = new RtmpSender();
-        mRtmpSender.setVideoParams(640, 360);
+        mRtmpSender.setVideoParams(size.width, size.hight);
         mRtmpSender.setAudioParams(AudioConfiguration.DEFAULT_FREQUENCY, 16, false);
         mRtmpSender.setSenderListener(mSenderListener);
         mLiveCameraView.setSender(mRtmpSender);
@@ -159,7 +169,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         @Override
         public void onConnected() {
 //            mLiveCameraView.start();
-            mCurrentBps = mVideoConfiguration.maxBps;
+            mCurrentBps = Integer.parseInt(mLiveData.initBps);
             liveStatus = true;
             mLiveUI.setRoomStatus(true);
             HttpUtils.changeLiveroomState(rtmpUrl, "1", null);
@@ -177,9 +187,9 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         }
 
         @Override
-        public void onPublishFail() {
+        public void onPublishFail(String errorMsg) {
             isRecording = false;
-            Toast.makeText(LiveActivity.this, "fail to publish stream", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LiveActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
             mLiveUI.setRoomStatus(false);
         }
 

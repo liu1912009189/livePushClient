@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.livepushclient.bean.LiveData;
+import com.example.livepushclient.fragment.SettingSheetFrg;
 import com.example.livepushclient.permission.DialogBuilder;
 import com.example.livepushclient.permission.PermissionUtils;
 import com.example.livepushclient.util.ViewClickUtils;
@@ -30,6 +32,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
     private Button mBtEnterRoom;
     private boolean isCameraPermitted, isMicroPermitted;
     private EditText mEditText;
+    private LiveData mLiveData;
 
 
     @Override
@@ -41,6 +44,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
             if(ViewClickUtils.isFastClick(v)){return;}
             Intent intent = new Intent(StartActivity.this, LiveActivity.class);
             intent.putExtra("url",mEditText.getText().toString().trim());
+            intent.putExtra("liveData",mLiveData);
             startActivity(intent);
 //            overridePendingTransition(R.anim.anim_slide_up, 0);
         });
@@ -48,8 +52,10 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         mEditText.setText("rtmp://112.17.52.56:1935/ios/dianqu");
         mBtPermissionCamera = findViewById(R.id.bt_permission_camera);
         mBtPermisssonMicro = findViewById(R.id.bt_permission_micro);
+        findViewById(R.id.tv_param).setOnClickListener(this);
         mBtPermissionCamera.setOnClickListener(this);
         mBtPermisssonMicro.setOnClickListener(this);
+
 
         if (PermissionUtils.permissionsChecking(this, new String[]{
                 Manifest.permission.CAMERA,
@@ -62,7 +68,18 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
             mBtPermissionCamera.setEnabled(false);
             mBtPermissionCamera.setBackground(ContextCompat.getDrawable(this,R.drawable.bg_gray_corner_dp25));
         }
+        initData();
 
+    }
+
+    private void initData() {
+        mLiveData = new LiveData();
+        mLiveData.netFlag = "0";
+        mLiveData.resolution = "360,640";
+        mLiveData.Fps = "15";
+        mLiveData.initBps = "1300";
+        mLiveData.minBps = "600";
+        mLiveData.maxBps = "1300";
     }
 
     private void checkPermissions() {
@@ -84,7 +101,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 isCameraPermitted = true;
-                mBtPermissionCamera.setBackground(getDrawable(R.drawable.bg_gray_corner_dp25));
+                mBtPermissionCamera.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_gray_corner_dp25));
                 mBtPermissionCamera.setEnabled(false);
             }else {
                 boolean result = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA);
@@ -109,7 +126,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
                 isMicroPermitted = true;
-                mBtPermisssonMicro.setBackground(getDrawable(R.drawable.bg_gray_corner_dp25));
+                mBtPermisssonMicro.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_gray_corner_dp25));
                 mBtPermisssonMicro.setEnabled(false);
             }else {
                 boolean result = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO);
@@ -132,7 +149,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO
         })) {
-            mBtEnterRoom.setBackground(getDrawable(R.drawable.bg_blue));
+            mBtEnterRoom.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_blue));
             mBtEnterRoom.setEnabled(true);
         }
     }
@@ -152,6 +169,11 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
                         Manifest.permission.RECORD_AUDIO,
                 }, REQUEST_MICRO_CODE);
                 break;
+            case R.id.tv_param:
+                SettingSheetFrg settingSheetFrg = new SettingSheetFrg();
+                settingSheetFrg.setLiveData(mLiveData);
+                settingSheetFrg.show(getSupportFragmentManager(),"param");
+                break;
         }
     }
 
@@ -164,18 +186,27 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
 //
             isCameraPermitted = true;
             mBtPermissionCamera.setEnabled(false);
-            mBtPermissionCamera.setBackground(getDrawable(R.drawable.bg_gray_corner_dp25));
+            mBtPermissionCamera.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_gray_corner_dp25));
         }
         if (PermissionUtils.permissionsChecking(this, new String[]{
                 Manifest.permission.RECORD_AUDIO,
         })) {
             isMicroPermitted = true;
             mBtPermisssonMicro.setEnabled(false);
-            mBtPermisssonMicro.setBackground(getDrawable(R.drawable.bg_gray_corner_dp25));
+            mBtPermisssonMicro.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_gray_corner_dp25));
         }
         if(isCameraPermitted && isMicroPermitted) {
             mBtEnterRoom.setEnabled(true);
-            mBtEnterRoom.setBackground(getDrawable(R.drawable.bg_blue));
+            mBtEnterRoom.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.bg_blue));
         }
+    }
+
+    public void setLiveData(LiveData liveData){
+        mLiveData.netFlag = liveData.netFlag;
+        mLiveData.resolution = liveData.resolution;
+        mLiveData.Fps =liveData.Fps;
+        mLiveData.initBps = liveData.initBps;
+        mLiveData.minBps = liveData.minBps;
+        mLiveData.maxBps = liveData.maxBps;
     }
 }

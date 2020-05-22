@@ -69,4 +69,19 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bt_permission_camera" />
+
+    <Button
+        android:id="@+id/tv_param"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="@string/param"
+        android:paddingLeft="@dimen/dp30"
+        android:textColor="@android:color/white"
+        android:paddingRight="@dimen/dp30"
+        android:background="@drawable/bg_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_permission_micro" />
 </androidx.constraintlayout.widget.ConstraintLayout>

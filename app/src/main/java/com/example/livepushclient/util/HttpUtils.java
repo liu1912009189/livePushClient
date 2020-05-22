@@ -14,6 +14,7 @@ import okhttp3.Call;
  */
 public class HttpUtils {
     public static String TAG = "rtmpHttp";
+    private static String BASE_URL = "http://20.26.20.81:8185";
 
     public interface NetWorkCall {
         void onError(Call call, Exception e, int id);
@@ -21,12 +22,22 @@ public class HttpUtils {
         void onReponse(String response, int id);
     }
 
+    public static void setBaseUrl(String netFlag){
+        if("0".equals(netFlag)){
+            BASE_URL = "https://wap.zj.10086.cn";
+        }else if("1".equals(netFlag)){
+            BASE_URL = "http://20.26.20.81:8185";
+        }else {
+            BASE_URL = "https://wap.zj.10086.cn";
+        }
+    }
+
     /**
      * 直播状态0 下播 1在播 2预览未连接 3链接中   4未连接  5离开  99错误
      */
     public static void changeLiveroomState(String trmpUrl, String state,final NetWorkCall netWorkCall) {
         DeviceInfo deviceInfo = SystemUtils.getDeviceInfo();
-        String url = "https://wap.zj.10086.cn/zjweb/live/roomState.do";
+        String url = BASE_URL +"/zjweb/live/roomState.do";
         OkHttpUtils
                 .get()
                 .tag(TAG)
@@ -62,7 +73,7 @@ public class HttpUtils {
     public static void isRoomLiveUsed(String rtmpUrl,final NetWorkCall netWorkCall ) {
          DeviceInfo deviceInfo = SystemUtils.getDeviceInfo();
 
-        String url = "https://wap.zj.10086.cn/zjweb/live/addrState.do";
+        String url = BASE_URL + "/zjweb/live/addrState.do";
         OkHttpUtils
                 .get()
                 .tag(TAG)
