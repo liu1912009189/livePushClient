@@ -50,6 +50,7 @@ public class GroupFilter extends AFilter {
         boolean b = mFilters.remove(filter);
         if (b) {
             size--;
+            filter.release();
         }
         return b;
     }

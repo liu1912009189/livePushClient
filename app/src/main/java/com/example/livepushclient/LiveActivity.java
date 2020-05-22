@@ -1,7 +1,6 @@
 package com.example.livepushclient;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Toast;
 
 import com.example.livepushclient.presenter.LivePresenter;
@@ -15,22 +14,28 @@ import com.laifeng.sopcastsdk.stream.packer.rtmp.RtmpPacker;
 import com.laifeng.sopcastsdk.stream.sender.rtmp.RtmpSender;
 import com.laifeng.sopcastsdk.ui.CameraLivingView;
 import com.laifeng.sopcastsdk.utils.SopCastLog;
+import com.laifeng.sopcastsdk.video.effect.Beauty;
+import com.laifeng.sopcastsdk.video.effect.LookupFilter;
 
 
 public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     private static final String TAG = LiveActivity.class.getSimpleName();
     private CameraLivingView mLiveCameraView;
     private String rtmpUrl = "";
-
-
     private LiveUI mLiveUI;
     private LivePresenter mLivePresenter;
     private VideoConfiguration mVideoConfiguration;
     private RtmpSender mRtmpSender;
     private int mCurrentBps;
+    /**
+     * 当前直播间状态是否为正在播,即是否手动点击开播且成功
+     */
     private boolean isRecording;
-    private boolean mShouldRestart,BeLiving;
-    private Handler mHandler;
+    /**
+     * 直播状态是否开启，仅当第一次点击开启直播且成功时，直播开启成功
+     * 只有点击下播时状态才为下播状态
+     */
+    private boolean liveStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,46 +47,35 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
 //        rtmpUrl = "rtmp://112.17.52.56:1935/ios/dianqu1234";
 //        rtmpUrl = "rtmp://96357.livepush.myqcloud.com/live/test?txSecret=4fbe6168eb46c8b47e08101692608790&txTime=5EC6A57F";
         initLiveView();
-        mHandler = new Handler();
         mLiveUI = new LiveUI(this, mLiveCameraView, rtmpUrl);
         mLivePresenter = new LivePresenter(this, rtmpUrl);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         mLiveCameraView.pause();
         mLivePresenter.onStop();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        mHandler.postDelayed(()->{
-            mLiveCameraView.resume();
-            mLivePresenter.onStart();
-        },100);
+    protected void onStart() {
+        super.onStart();
+        mLiveCameraView.resume();
+        mLivePresenter.onStart();
     }
 
     public boolean isRecording() {
         return isRecording;
     }
 
-    /**
-     * 该标志主要是记录是否手动点击过开始直播，暂定直播以及退出直播间，如果点击过并且推流成功则下次onStart时
-     * 需要重新连接流，如果手动点击过暂停或者退出则不需要重新连接流
-     * @return
-     */
-    public boolean shouldReStart(){
-        return mShouldRestart;
+
+    public boolean isLiveStatus() {
+        return liveStatus;
     }
 
-    public boolean isBeLiving(){
-        return BeLiving;
-    }
-
-    public void setBeLiving(boolean beLiving){
-        BeLiving = beLiving;
+    public void setLiveStatus(boolean liveStatus) {
+        this.liveStatus = liveStatus;
     }
 
     private void initLiveView() {
@@ -99,14 +93,14 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mVideoConfiguration = videoBuilder.build();
         mLiveCameraView.setVideoConfiguration(mVideoConfiguration);
 
-//        Beauty beauty = new Beauty(getApplicationContext().getResources());
-//        LookupFilter lookupFilter = new LookupFilter(getApplicationContext().getResources());
-//        lookupFilter.setMaskImage("lookup/purity.png");
-//        beauty.setFlag(6);
-//        lookupFilter.setIntensity(1f);
-//        mLiveCameraView.addFilter(lookupFilter);
-//        mLiveCameraView.addFilter(beauty);
-//        mLiveCameraView.complete();
+        Beauty beauty = new Beauty(getApplicationContext().getResources());
+        LookupFilter lookupFilter = new LookupFilter(getApplicationContext().getResources());
+        lookupFilter.setMaskImage("lookup/purity.png");
+        beauty.setFlag(6);
+        lookupFilter.setIntensity(1f);
+        mLiveCameraView.addFilter(lookupFilter);
+        mLiveCameraView.addFilter(beauty);
+        mLiveCameraView.complete();
 
         //设置水印
 //        Bitmap watermarkImg = BitmapFactory.decodeResource(getResources(), R.mipmap.watermark);
@@ -166,14 +160,11 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         public void onConnected() {
 //            mLiveCameraView.start();
             mCurrentBps = mVideoConfiguration.maxBps;
-            mShouldRestart = true;
-            BeLiving = true;
+            liveStatus = true;
             mLiveUI.setRoomStatus(true);
-            HttpUtils.changeLiveroomState(rtmpUrl, "1",null);
+            HttpUtils.changeLiveroomState(rtmpUrl, "1", null);
             mLivePresenter.setStartStatus(true);
-            mHandler.postDelayed(()->{
-                mLiveCameraView.start();
-            },200);
+            mLiveCameraView.start();
         }
 
         @Override
@@ -231,7 +222,6 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mHandler.removeCallbacksAndMessages(null);
         mLiveCameraView.stop();
         mLiveCameraView.release();
         mLivePresenter.onDestroy();
@@ -240,8 +230,8 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     @Override
     public void onBackPressed() {
         mLiveUI.setExit(true);
-        if (BeLiving) {
-            BeLiving = false;
+        if (liveStatus) {
+            liveStatus = false;
             stopStreaming(true);
         } else {
             finish();
@@ -273,13 +263,24 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     }
 
     public void stopStreaming(boolean isExit) {
-        mLiveCameraView.stop();
-        mLiveUI.setRoomStatus(false);
-        mLivePresenter.closeLiveRoom(isExit);
+        mLiveCameraView.pause();
+        closeRoom(isExit);
         isRecording = false;
     }
 
-    public void setShouldRestart(boolean shouldRestart){
-        mShouldRestart =shouldRestart;
+    public void closeRoom(boolean isExit){
+        mLiveUI.setRoomStatus(false);
+        mLivePresenter.closeLiveRoom(isExit);
+    }
+
+    public void onUserComeBack() {
+        mLiveCameraView.resume();
+        isRecording = true;
+        openRoom();
+    }
+
+    public void openRoom() {
+        mLiveUI.setRoomStatus(true);
+        HttpUtils.changeLiveroomState(rtmpUrl, "1", null);
     }
 }

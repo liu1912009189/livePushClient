@@ -67,20 +67,21 @@ public class LiveUI implements View.OnClickListener {
         }
         switch (view.getId()) {
             case R.id.btn_camera_shutter://开始推流
-                if (!activity.isRecording()) {
+                if(!activity.isLiveStatus()){
                     mTvStatus.setText(R.string.broadcast_connecting);
                     activity.startLive();
+                }else if (!activity.isRecording()) {
+                    setRoomStatus(true);
+                    activity.onUserComeBack();
                 } else {
-                    activity.setShouldRestart(false);
                     activity.stopStreaming(false);
                 }
                 break;
 //
             case R.id.btn_camera_exit:
                 isExit = true;
-                if(activity.isBeLiving()){
-                    activity.setBeLiving(false);
-                    activity.setShouldRestart(false);
+                if(activity.isLiveStatus()){
+                    activity.setLiveStatus(false);
                     activity.stopStreaming(true);
                 }else {
                     activity.finish();
@@ -105,6 +106,7 @@ public class LiveUI implements View.OnClickListener {
                     liveCameraView.addFilter(beauty);
                     liveCameraView.complete();
                 }
+                mBeautyOneStep.setImageResource(isBeatify?R.drawable.camra_beauty:R.drawable.camra_beauty_close);
                 isBeatify = !isBeatify;
 
                 break;

@@ -28,7 +28,6 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
      */
     private String mRtmpUrl;
     private NetWokrListener mNetWokrListener;
-    private boolean isUse = true;
     private boolean shouldReStart;
 
     public LivePresenter(LiveActivity target, String rtmpUrl) {
@@ -69,7 +68,7 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
                             return;
                         }
                         String use = jsonObject.optString("use");
-                        isUse = "0".equals(use) ? false : true;
+                       boolean isUse = "0".equals(use) ? false : true;
                         if (isUse) {
                             String brand = jsonObject.optString("brand");
                             String deviceName = jsonObject.optString("device_name");
@@ -132,8 +131,8 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
     @Override
     public void onStart() {
         super.onStart();
-        if(getTarget().shouldReStart()){
-            getTarget().startStream();
+        if(getTarget().isRecording()){
+            getTarget().openRoom();
         }
 
     }
@@ -142,7 +141,7 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
     public void onStop() {
         super.onStop();
         if(getTarget().isRecording()){
-            getTarget().stopStreaming(false);
+            getTarget().closeRoom(false);
         }
     }
 
@@ -160,11 +159,11 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
 
     @Override
     public void onNetworkChanged() {
-        if (getTarget().shouldReStart() == true) {
-            Log.e(TAG,"onNetworkChanged");
-            getTarget().stopStreaming(true);
-            getTarget().startStream();
-        }
+//        if (getTarget().shouldReStart() == true) {
+//            Log.e(TAG,"onNetworkChanged");
+//            getTarget().stopStreaming(true);
+//            getTarget().startStream();
+//        }
     }
 
     @Override
