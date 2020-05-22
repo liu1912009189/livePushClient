@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">WSLiveDemo</string>
+
+    <string name="tab_preview_filter">滤镜</string>
+    <string name="filter_amaro">Amaro</string>
+    <string name="filter_brannan">Brannan</string>
+    <string name="filter_brooklyn">Brooklyn</string>
+    <string name="filter_Earlybird">EarlyBird</string>
+    <string name="filter_freud">Freud</string>
+    <string name="filter_hefe">Hefe</string>
+    <string name="filter_hudson">Hudson</string>
+    <string name="filter_inkwell">Inkwell</string>
+    <string name="filter_kevin">Kevin</string>
+    <string name="filter_lomo">Lomo</string>
+    <string name="filter_n1977">1977</string>
+    <string name="filter_nashville">Nashville</string>
+    <string name="filter_pixar">Pixar</string>
+    <string name="filter_rise">Rise</string>
+    <string name="filter_sierra">Sierra</string>
+    <string name="filter_sutro">Sutro</string>
+    <string name="filter_toastero">Toaster2</string>
+    <string name="filter_valencia">Valencia</string>
+    <string name="filter_walden">Walden</string>
+    <string name="filter_xproii">XproII</string>
+
+    <string name="filter_none">原图</string>
+    <string name="filter_whitecat">白猫</string>
+    <string name="filter_blackcat">黑猫</string>
+    <string name="filter_romance">浪漫</string>
+    <string name="filter_sakura">樱花</string>
+    <string name="filter_antique">复古</string>
+    <string name="filter_beauty">美肤</string>
+    <string name="filter_calm">平静</string>
+    <string name="filter_cool">冰冷</string>
+    <string name="filter_emerald">祖母绿</string>
+    <string name="filter_evergreen">常青</string>
+    <string name="filter_fairytale">童话</string>
+    <string name="filter_healthy">健康</string>
+    <string name="filter_latte">拿铁</string>
+    <string name="filter_nostalgia">怀旧</string>
+    <string name="filter_tender">温柔</string>
+    <string name="filter_warm">温暖</string>
+    <string name="filter_sweets">甜品</string>
+    <string name="filter_sunrise">日出</string>
+    <string name="filter_sunset">日落</string>
+    <string name="filter_skinwhiten">美白</string>
+    <string name="filter_crayon">蜡笔</string>
+    <string name="filter_sketch">素描</string>
+
+    <string name="edit_filter">滤镜</string>
+    <string name="edit_edit">编辑</string>
+    <string name="edit_adds">装饰</string>
+    <string name="edit_frame">边框</string>
+    <string name="edit_beauty">美颜</string>
+
+    <string name="edit_contrast">对比度</string>
+    <string name="edit_exposure">曝光</string>
+    <string name="edit_vibrance">自然饱和度</string>
+    <string name="edit_saturation">饱和度</string>
+    <string name="edit_sharpness">锐化</string>
+    <string name="edit_brightness">亮度</string>
+    <string name="edit_hue">色调</string>
+
+
+    <string name="enter_room">进入直播间</string>
+    <!--权限请求-->
+    <string name="request_camera_permission">需要相机权限</string>
+    <string name="request_storage_permission">需要存储权限</string>
+    <string name="request_sound_permission">需要录音权限</string>
+
+
+    <string name="btn_dialog_cancel">取消</string>
+    <string name="btn_dialog_ok">确定</string>
+    <string name="start_live">开始直播</string>
+
+    <string name="end_live">暂停直播</string>
+    <string name="broadcast_status_off">RTMP状态：直播未开始</string>
+    <string name="broadcast_status_on">RTMP状态：直播已开始</string>
+    <string name="broadcast_connecting">RTMP状态：连接中</string>
+
+
+    <string name="open_permission_camera">打开摄像头权限</string>
+    <string name="open_permission_micro">打开麦克风权限</string>
+
+    <string name="tips">提示</string>
+    <string name="camera_permission_tips">请前往设置->应用->权限管理中打开app摄像头权限</string>
+    <string name="micro_permission_tips">请前往设置->应用->权限管理中打开app麦克风权限</string>
+    <string name="network_error_retry">网络异常，推流中断请尝试重连</string>
+    <string name="network_error">网络异常，请检查你的网络</string>
+    <string name="servererror">服务器异常</string>
+    <string name="exit_room">退出直播失败，请联系管理员</string>
+</resources>

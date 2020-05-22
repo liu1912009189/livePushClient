@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_live"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LiveActivity">
+
+    <com.laifeng.sopcastsdk.ui.CameraLivingView
+        android:id="@+id/liveView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp25"
+        android:background="@drawable/bg_gray_corner_dp25"
+        android:minWidth="@dimen/dp150"
+        android:padding="@dimen/dp7"
+        android:text="@string/broadcast_status_off"
+        android:textColor="@color/white_alpha_80"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80.0dip"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/lighter_gray"
+        android:paddingTop="5dip"
+        android:paddingBottom="5dip">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/btn_camera_beauty"
+                android:layout_width="0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:scaleType="center"
+                android:src="@drawable/camra_beauty"></ImageView>
+
+            <ImageView
+                android:id="@+id/bt_camera_exchange"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="center"
+                android:src="@drawable/camra_preview" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_camera_shutter"
+            android:layout_width="0dip"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1.0"
+            android:background="@drawable/bg_white_corner_dp25"
+            android:text="@string/start_live" />
+
+        <ImageView
+            android:id="@+id/btn_camera_exit"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:scaleType="center"
+            android:src="@drawable/ic_close"></ImageView>
+    </LinearLayout>
+
+
+</RelativeLayout>
