@@ -80,6 +80,7 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         mLiveData.initBps = "1300";
         mLiveData.minBps = "600";
         mLiveData.maxBps = "1300";
+        mLiveData.beautyFlag = 45;
     }
 
     private void checkPermissions() {
@@ -208,5 +209,6 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
         mLiveData.initBps = liveData.initBps;
         mLiveData.minBps = liveData.minBps;
         mLiveData.maxBps = liveData.maxBps;
+        mLiveData.beautyFlag = liveData.beautyFlag;
     }
 }

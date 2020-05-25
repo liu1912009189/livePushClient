@@ -90,7 +90,7 @@
     <string name="servererror">服务器异常</string>
     <string name="exit_room">退出直播失败，请联系管理员</string>
     <string name="fps">帧率</string>
-    <string name="fps_hint">15</string>
+    <string name="fps_hint">15~60之间取整</string>
     <string name="min_bitrate">最小码率</string>
     <string name="max_bitrate">最大码率</string>
     <string name="initial_bitrate">码率初值</string>

@@ -13,6 +13,7 @@ public class LiveData implements Parcelable {
     public String Fps;
     public String initBps;
     public String resolution;
+    public int beautyFlag;
     /**
      * 0开发 1测试
      */
@@ -27,6 +28,7 @@ public class LiveData implements Parcelable {
         initBps = in.readString();
         resolution = in.readString();
         netFlag = in.readString();
+        beautyFlag = in.readInt();
     }
 
     public static final Creator<LiveData> CREATOR = new Creator<LiveData>() {
@@ -54,6 +56,7 @@ public class LiveData implements Parcelable {
         dest.writeString(initBps);
         dest.writeString(resolution);
         dest.writeString(netFlag);
+        dest.writeInt(beautyFlag);
     }
 
     @Override
@@ -65,6 +68,7 @@ public class LiveData implements Parcelable {
                 ", initBps='" + initBps + '\'' +
                 ", resolution='" + resolution + '\'' +
                 ", netFlag='" + netFlag + '\'' +
+                ", beautyFlag='" + beautyFlag + '\'' +
                 '}';
     }
 }

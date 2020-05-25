@@ -7,8 +7,6 @@ import android.widget.TextView;
 
 import com.example.livepushclient.util.ViewClickUtils;
 import com.laifeng.sopcastsdk.ui.CameraLivingView;
-import com.laifeng.sopcastsdk.video.effect.Beauty;
-import com.laifeng.sopcastsdk.video.effect.LookupFilter;
 
 
 /**
@@ -95,14 +93,7 @@ public class LiveUI implements View.OnClickListener {
                     liveCameraView.removeAllFilter();
                     liveCameraView.complete();
                 } else {
-                    Beauty beauty = new Beauty(activity.getResources());
-                    LookupFilter lookupFilter = new LookupFilter(activity.getResources());
-                    lookupFilter.setMaskImage("lookup/purity.png");
-                    beauty.setFlag(6);
-                    lookupFilter.setIntensity(1f);
-                    liveCameraView.addFilter(lookupFilter);
-                    liveCameraView.addFilter(beauty);
-                    liveCameraView.complete();
+                    activity.setBeauty();
                 }
                 mBeautyOneStep.setImageResource(isBeatify?R.drawable.camra_beauty:R.drawable.camra_beauty_close);
                 isBeatify = !isBeatify;

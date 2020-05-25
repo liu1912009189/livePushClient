@@ -110,14 +110,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mVideoConfiguration = videoBuilder.build();
         mLiveCameraView.setVideoConfiguration(mVideoConfiguration);
 
-        Beauty beauty = new Beauty(getApplicationContext().getResources());
-        LookupFilter lookupFilter = new LookupFilter(getApplicationContext().getResources());
-        lookupFilter.setMaskImage("lookup/purity.png");
-        beauty.setFlag(6);
-        lookupFilter.setIntensity(1f);
-        mLiveCameraView.addFilter(lookupFilter);
-        mLiveCameraView.addFilter(beauty);
-        mLiveCameraView.complete();
+        setBeauty();
 
         //设置水印
 //        Bitmap watermarkImg = BitmapFactory.decodeResource(getResources(), R.mipmap.watermark);
@@ -299,5 +292,16 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     public void openRoom() {
         mLiveUI.setRoomStatus(true);
         HttpUtils.changeLiveroomState(rtmpUrl, "1", null);
+    }
+
+    public void setBeauty() {
+        Beauty beauty = new Beauty(getApplicationContext().getResources());
+        LookupFilter lookupFilter = new LookupFilter(getApplicationContext().getResources());
+        lookupFilter.setMaskImage("lookup/purity.png");
+        beauty.setFlag(mLiveData.beautyFlag / 20 +1);
+        lookupFilter.setIntensity(mLiveData.beautyFlag / 100f);
+        mLiveCameraView.addFilter(lookupFilter);
+        mLiveCameraView.addFilter(beauty);
+        mLiveCameraView.complete();
     }
 }

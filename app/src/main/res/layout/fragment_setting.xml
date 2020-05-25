@@ -120,7 +120,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/fps" />
 
-            <EditText
+            <com.example.livepushclient.view.XEditText
                 android:id="@+id/et_frame_rate"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -149,12 +149,12 @@
                     android:layout_weight="1"
                     android:text="@string/min_bitrate" />
 
-                <EditText
+                <com.example.livepushclient.view.XEditText
                     android:id="@+id/et_min_bitrate"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="min bitrate"
+                    android:hint="0～800"
                     android:inputType="number"
                     android:singleLine="true"
                     android:text="600" />
@@ -172,12 +172,12 @@
                     android:layout_weight="1"
                     android:text="@string/max_bitrate" />
 
-                <EditText
+                <com.example.livepushclient.view.XEditText
                     android:id="@+id/et_max_bitrate"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="max bitrate"
+                    android:layout_weight="1.30"
+                    android:hint="800～2000"
                     android:inputType="number"
                     android:singleLine="true"
                     android:text="1300" />
@@ -201,12 +201,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/initial_bitrate" />
 
-                <EditText
+                <com.example.livepushclient.view.XEditText
                     android:id="@+id/et_init_bitrate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
-                    android:hint="initial bitrate"
+                    android:hint="大于等于600"
                     android:inputType="number"
                     android:singleLine="true"
                     android:text="1300" />
@@ -247,5 +247,23 @@
                 android:textSize="10sp" />
 
         </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="美颜级别:"
+            android:id="@+id/tv_beauty"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/rg_network"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_toEndOf="@+id/tv_beauty" />
+
+
     </RelativeLayout>
 </ScrollView>

@@ -1,11 +1,13 @@
 package com.example.livepushclient.fragment;
 
-import android.widget.EditText;
+import android.text.TextUtils;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 
 import com.example.livepushclient.R;
 import com.example.livepushclient.StartActivity;
 import com.example.livepushclient.bean.LiveData;
+import com.example.livepushclient.view.XEditText;
 
 /**
  * Created by liule on 2020/5/22.
@@ -13,13 +15,14 @@ import com.example.livepushclient.bean.LiveData;
  */
 public class SettingSheetFrg extends BaseBottomSheetFrag {
 
-    private EditText mEtFps;
-    private EditText mEtMinBps;
-    private EditText mEtMaxBps;
-    private EditText mEtInitBps;
+    private XEditText mEtFps;
+    private XEditText mEtMinBps;
+    private XEditText mEtMaxBps;
+    private XEditText mEtInitBps;
     private RadioGroup mRgPix;
     private RadioGroup mRgNetwokr;
     private LiveData mLiveData = new LiveData();
+    private SeekBar mSeekBar;
 
     @Override
     public int getLayoutResId() {
@@ -34,6 +37,7 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
         mEtMaxBps = rootView.findViewById(R.id.et_max_bitrate);
         mEtInitBps = rootView.findViewById(R.id.et_init_bitrate);
         mRgNetwokr = rootView.findViewById(R.id.rg_network);
+        mSeekBar = rootView.findViewById(R.id.seekBar);
 
         mRgPix.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -47,6 +51,13 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
                 setNetwork(checkedId);
             }
         });
+
+        mEtFps.setMaxmumFilter(15, 60, 0);
+        mEtInitBps.setMaxmumFilter(600,2000,0);
+        mEtMinBps.setMaxmumFilter(0, 800, 0);
+        mEtMaxBps.setMaxmumFilter(800, 2000, 0);
+
+        mSeekBar.setProgress(mLiveData.beautyFlag);
         mEtFps.setText(mLiveData.Fps);
         mEtMinBps.setText(mLiveData.minBps);
         mEtMaxBps.setText(mLiveData.maxBps);
@@ -56,15 +67,15 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
     }
 
     private void initNetWork() {
-        if("0".equals(mLiveData.netFlag)){
+        if ("0".equals(mLiveData.netFlag)) {
             mRgNetwokr.check(R.id.rb_dev);
-        }else if("1".equals(mLiveData.netFlag)){
+        } else if ("1".equals(mLiveData.netFlag)) {
             mRgNetwokr.check(R.id.rb_test);
         }
     }
 
     private void initResolution() {
-        switch (mLiveData.resolution){
+        switch (mLiveData.resolution) {
             case "360,640":
                 mRgPix.check(R.id.rb_360);
                 break;
@@ -83,7 +94,7 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
     }
 
     private void setNetwork(int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
             case R.id.rb_dev:
                 mLiveData.netFlag = "0";
                 break;
@@ -97,7 +108,7 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
     }
 
     private void setResolution(int checkedId) {
-        switch (checkedId){
+        switch (checkedId) {
             case R.id.rb_360:
                 mLiveData.resolution = "360,640";
                 break;
@@ -118,10 +129,37 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
     @Override
     public void onStop() {
         super.onStop();
-        mLiveData.maxBps = mEtMaxBps.getText().toString().trim();
-        mLiveData.minBps= mEtMinBps.getText().toString().trim();
-        mLiveData.initBps = mEtInitBps.getText().toString().trim();
-        mLiveData.Fps = mEtFps.getText().toString().trim();
+        String maxBps = mEtMaxBps.getText().toString().trim();
+        int tempMaxBps = 0;
+        if (!TextUtils.isEmpty(maxBps)) {
+             tempMaxBps = Integer.parseInt(maxBps);
+            if (tempMaxBps >= 800 && tempMaxBps <= 200) {
+                mLiveData.maxBps = maxBps;
+            }
+        }
+        String minBps = mEtMinBps.getText().toString().trim();
+        int tempMinBps = 0;
+        if (!TextUtils.isEmpty(minBps)) {
+             tempMinBps = Integer.parseInt(minBps);
+            if (tempMinBps >= 0 && tempMinBps <= 800) {
+                mLiveData.minBps = minBps;
+            }
+        }
+        String initBps = mEtInitBps.getText().toString().trim();
+        if (!TextUtils.isEmpty(initBps)) {
+            int tempInitBps = Integer.parseInt(initBps);
+            if (tempInitBps >= tempMinBps && tempInitBps <= tempMaxBps) {
+                mLiveData.initBps = initBps;
+            }
+        }
+        String fps = mEtFps.getText().toString().trim();
+        if (!TextUtils.isEmpty(fps)) {
+            int temFps = Integer.parseInt(fps);
+            if (temFps >= 15 && temFps <= 60) {
+                mLiveData.Fps = fps;
+            }
+        }
+        mLiveData.beautyFlag = mSeekBar.getProgress();
         ((StartActivity) getActivity()).setLiveData(mLiveData);
     }
 
@@ -132,6 +170,7 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
         mLiveData.initBps = liveData.initBps;
         mLiveData.minBps = liveData.minBps;
         mLiveData.maxBps = liveData.maxBps;
+        mLiveData.beautyFlag = liveData.beautyFlag;
 
 
     }

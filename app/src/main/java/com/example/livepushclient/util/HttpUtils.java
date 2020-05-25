@@ -14,7 +14,7 @@ import okhttp3.Call;
  */
 public class HttpUtils {
     public static String TAG = "rtmpHttp";
-    private static String BASE_URL = "http://20.26.20.81:8185";
+    private static String BASE_URL = "http://20.26.20.83:8185";
 
     public interface NetWorkCall {
         void onError(Call call, Exception e, int id);
