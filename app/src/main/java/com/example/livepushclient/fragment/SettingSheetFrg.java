@@ -88,6 +88,9 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
             case "720,1280":
                 mRgPix.check(R.id.rb_720);
                 break;
+            case "1080,1920":
+                mRgPix.check(R.id.rb_1080);
+                break;
             default:
                 break;
         }
@@ -120,6 +123,9 @@ public class SettingSheetFrg extends BaseBottomSheetFrag {
                 break;
             case R.id.rb_720:
                 mLiveData.resolution = "720,1280";
+                break;
+            case R.id.rb_1080:
+                mLiveData.resolution = "1080,1920";
                 break;
             default:
                 mLiveData.resolution = "360,640";
