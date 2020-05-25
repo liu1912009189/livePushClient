@@ -26,7 +26,7 @@ import java.nio.FloatBuffer;
 public class RenderScreen {
     private final FloatBuffer mNormalVtxBuf = GlUtil.createVertexBuffer();
     private final FloatBuffer mNormalTexCoordBuf = GlUtil.createTexCoordBuffer();
-    private final float[] mPosMtx = GlUtil.createIdentityMtx();
+    private  float[] mPosMtx = GlUtil.createIdentityMtx();
 
     private int mFboTexId;
 
@@ -119,6 +119,15 @@ public class RenderScreen {
             mCameraTexCoordBuffer.position(0);
         }
 
+        int facing = cameraData.cameraFacing;
+        if(muPosMtxHandle>= 0) {
+            if(facing == CameraData.FACING_FRONT) {
+               mPosMtx = mSymmetryMtx;
+            }else {
+               mPosMtx = mNormalMtx;
+            }
+        }
+
     }
 
     public void setWatermark(Watermark watermark) {
@@ -206,19 +215,7 @@ public class RenderScreen {
                 2, GLES20.GL_FLOAT, false, 4 * 2, mCameraTexCoordBuffer);
         GLES20.glEnableVertexAttribArray(maTexCoordHandle);
 
-        //处理前置摄像头镜像
-        CameraData cameraData = CameraHolder.instance().getCameraData();
-        if(cameraData != null) {
-            int facing = cameraData.cameraFacing;
-            if(muPosMtxHandle>= 0) {
-                if(facing == CameraData.FACING_FRONT) {
-                    GLES20.glUniformMatrix4fv(muPosMtxHandle, 1, false, mSymmetryMtx, 0);
-                }else {
-                    GLES20.glUniformMatrix4fv(muPosMtxHandle, 1, false, mNormalMtx, 0);
-                }
-            }
-        }
-
+        GLES20.glUniformMatrix4fv(muPosMtxHandle, 1, false, mPosMtx, 0);
 //        GLES20.glUniformMatrix4fv(muPosMtxHandle, 1, false, mPosMtx, 0);
         GLES20.glUniform1i(muSamplerHandle, 0);
 
@@ -231,6 +228,14 @@ public class RenderScreen {
         drawWatermark();
 
         GlUtil.checkGlError("draw_E");
+    }
+
+    public void enableCameraMirror(){
+        mPosMtx = mSymmetryMtx;
+    }
+
+    public void disableMirror(){
+        mPosMtx = mNormalMtx;
     }
 
     private void drawWatermark() {

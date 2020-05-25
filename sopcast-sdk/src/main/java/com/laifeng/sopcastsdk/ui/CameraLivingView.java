@@ -287,6 +287,15 @@ public class CameraLivingView extends CameraView {
         mRenderer.setWatermark(watermark);
     }
 
+    public void enableCameraMirror(){
+        mRenderer.enableCameraMirror();
+    }
+
+    public void disableMirror(){
+        mRenderer.disableCameraMirror();
+    }
+
+
     public boolean setVideoBps(int bps) {
         return mStreamController.setVideoBps(bps);
     }

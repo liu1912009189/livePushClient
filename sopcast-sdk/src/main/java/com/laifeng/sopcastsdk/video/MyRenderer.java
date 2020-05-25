@@ -307,4 +307,18 @@ public class MyRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
         }
     }
 
+    /**
+     * 开启预览镜像
+     */
+    public void enableCameraMirror(){
+        mRenderScreen.enableCameraMirror();
+    }
+
+    /**
+     * 关闭预览镜像
+     */
+    public void disableCameraMirror(){
+        mRenderScreen.disableMirror();
+    }
+
 }

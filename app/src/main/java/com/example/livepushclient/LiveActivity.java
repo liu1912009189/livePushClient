@@ -1,6 +1,7 @@
 package com.example.livepushclient;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,6 +10,8 @@ import com.example.livepushclient.presenter.LivePresenter;
 import com.example.livepushclient.presenter.ViewUpateInterface;
 import com.example.livepushclient.util.HttpUtils;
 import com.example.livepushclient.util.StringUtil;
+import com.laifeng.sopcastsdk.camera.CameraData;
+import com.laifeng.sopcastsdk.camera.CameraHolder;
 import com.laifeng.sopcastsdk.camera.CameraListener;
 import com.laifeng.sopcastsdk.configuration.AudioConfiguration;
 import com.laifeng.sopcastsdk.configuration.CameraConfiguration;
@@ -32,6 +35,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     private RtmpSender mRtmpSender;
     private int mCurrentBps;
     private boolean isStreamInterupt;
+
     /**
      * 当前直播间状态是否为正在播,即是否手动点击开播且成功
      */
@@ -42,7 +46,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
      */
     private boolean liveStatus;
     private LiveData mLiveData;
-    private int width,height;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +55,14 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         StatusBarUtils.setTranslucentStatus(this);
         rtmpUrl = getIntent().getStringExtra("url");
         mLiveData = getIntent().getParcelableExtra("liveData");
-        Log.e(TAG,mLiveData.toString());
+        Log.e(TAG, mLiveData.toString());
 //        rtmpUrl = "rtmp://rtmp.jiangshi99.com/jiang/1?auth_key=1588844080-0-0-5192cc6cb11c580a8d47c0643fca8048";
 //        rtmpUrl = "rtmp://112.17.52.56:1935/ios/dianqu1234";
 //        rtmpUrl = "rtmp://96357.livepush.myqcloud.com/live/test?txSecret=4fbe6168eb46c8b47e08101692608790&txTime=5EC6A57F";
         initLiveView();
         mLiveUI = new LiveUI(this, mLiveCameraView, rtmpUrl);
         mLivePresenter = new LivePresenter(this, rtmpUrl);
+        mHandler = new Handler();
     }
 
     @Override
@@ -83,7 +88,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         return liveStatus;
     }
 
-    public boolean isStreamInterupt(){
+    public boolean isStreamInterupt() {
         return isStreamInterupt;
     }
 
@@ -98,7 +103,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLiveCameraView.init();
         CameraConfiguration.Builder cameraBuilder = new CameraConfiguration.Builder();
         cameraBuilder.setOrientation(CameraConfiguration.Orientation.PORTRAIT)
-                .setFacing(CameraConfiguration.Facing.BACK);
+                .setFacing(CameraConfiguration.Facing.FRONT);
         CameraConfiguration cameraConfiguration = cameraBuilder.build();
         mLiveCameraView.setCameraConfiguration(cameraConfiguration);
 
@@ -106,7 +111,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         Size size = StringUtil.parseSize(mLiveData.resolution);
         videoBuilder.setSize(size.width, size.hight);
         videoBuilder.setFps(Integer.parseInt(mLiveData.Fps));
-        videoBuilder.setBps(Integer.parseInt(mLiveData.minBps),Integer.parseInt(mLiveData.maxBps));
+        videoBuilder.setBps(Integer.parseInt(mLiveData.minBps), Integer.parseInt(mLiveData.maxBps));
         mVideoConfiguration = videoBuilder.build();
         mLiveCameraView.setVideoConfiguration(mVideoConfiguration);
 
@@ -130,6 +135,20 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
 
             @Override
             public void onCameraChange() {
+                //此处延时100ms,目的在于等摄像头switch成功后，预览现实出来以后再设置镜像，可以避免预览没有出来钱导致的切换摄像头
+                //镜像问题
+                mHandler.postDelayed(()->{
+                    CameraData cameraData = CameraHolder.instance().getCameraData();
+                    if (cameraData != null) {
+                        int facing = cameraData.cameraFacing;
+                        if (facing == CameraData.FACING_FRONT) {
+                            mLiveCameraView.enableCameraMirror();
+                        } else {
+                            mLiveCameraView.disableMirror();
+                        }
+                    }
+                },100);
+
             }
         });
 
@@ -232,6 +251,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHandler.removeCallbacksAndMessages(null);
         mLiveCameraView.stop();
         mLiveCameraView.release();
         mLivePresenter.onDestroy();
@@ -278,7 +298,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         isRecording = false;
     }
 
-    public void closeRoom(boolean isExit){
+    public void closeRoom(boolean isExit) {
         mLiveUI.setRoomStatus(false);
         mLivePresenter.closeLiveRoom(isExit);
     }
@@ -298,7 +318,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         Beauty beauty = new Beauty(getApplicationContext().getResources());
         LookupFilter lookupFilter = new LookupFilter(getApplicationContext().getResources());
         lookupFilter.setMaskImage("lookup/purity.png");
-        beauty.setFlag(mLiveData.beautyFlag / 20 +1);
+        beauty.setFlag(mLiveData.beautyFlag / 20 + 1);
         lookupFilter.setIntensity(mLiveData.beautyFlag / 100f);
         mLiveCameraView.addFilter(lookupFilter);
         mLiveCameraView.addFilter(beauty);

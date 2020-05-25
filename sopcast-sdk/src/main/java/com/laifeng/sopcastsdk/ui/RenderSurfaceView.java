@@ -125,5 +125,27 @@ public class RenderSurfaceView extends GLSurfaceView {
         });
     }
 
+    public void enableCameraMirror(){
+        this.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                if (null != mRenderer) {
+                    mRenderer.enableCameraMirror();
+                }
+            }
+        });
+    }
+
+    public void disableMirror(){
+        this.queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                if (null != mRenderer) {
+                    mRenderer.disableCameraMirror();
+                }
+            }
+        });
+    }
+
 
 }
