@@ -3,11 +3,13 @@ package com.example.livepushclient;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.example.livepushclient.bean.LiveData;
 import com.example.livepushclient.presenter.LivePresenter;
 import com.example.livepushclient.presenter.ViewUpateInterface;
+import com.example.livepushclient.util.CLogUtil;
 import com.example.livepushclient.util.HttpUtils;
 import com.example.livepushclient.util.StringUtil;
 import com.laifeng.sopcastsdk.camera.CameraData;
@@ -79,10 +81,25 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLivePresenter.onStart();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     public boolean isRecording() {
         return isRecording;
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        return super.dispatchTouchEvent(ev);
+
+    }
 
     public boolean isLiveStatus() {
         return liveStatus;
@@ -135,7 +152,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
 
             @Override
             public void onCameraChange() {
-                //此处延时100ms,目的在于等摄像头switch成功后，预览现实出来以后再设置镜像，可以避免预览没有出来钱导致的切换摄像头
+                //此处延时100ms,目的在于等摄像头switch成功后，预览现实出来以后再设置镜像，可以避免预览没有出来前导致的切换摄像头
                 //镜像问题
                 mHandler.postDelayed(()->{
                     CameraData cameraData = CameraHolder.instance().getCameraData();
@@ -199,6 +216,7 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         public void onDisConnected() {
             mLiveCameraView.stop();
             isRecording = false;
+            liveStatus = false;
             mLiveUI.setRoomStatus(false);
             Toast.makeText(getApplicationContext(), R.string.network_error_retry, Toast.LENGTH_SHORT).show();
             isStreamInterupt = true;
@@ -208,7 +226,8 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         @Override
         public void onPublishFail(String errorMsg) {
             isRecording = false;
-            Toast.makeText(LiveActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),R.string.operate_busy,Toast.LENGTH_SHORT).show();
+            CLogUtil.D(TAG,errorMsg);
             mLiveUI.setRoomStatus(false);
         }
 
@@ -324,4 +343,6 @@ public class LiveActivity extends BaseActivity implements ViewUpateInterface {
         mLiveCameraView.addFilter(beauty);
         mLiveCameraView.complete();
     }
+
+
 }

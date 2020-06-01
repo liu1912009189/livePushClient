@@ -38,6 +38,12 @@ public class StartActivity extends BaseActivity implements View.OnClickListener 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //此处代码应该放在启动页，用户解决oppo手机系统奇葩问题，当前界面回到桌面再回来会重新创建的问题
+        if (!isTaskRoot()) {
+            finish();
+            return;
+
+        }
         setContentView(R.layout.start_activity);
         mBtEnterRoom = findViewById(R.id.button);
         mBtEnterRoom.setOnClickListener((v) -> {

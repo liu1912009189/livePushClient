@@ -85,10 +85,11 @@
     <string name="tips">提示</string>
     <string name="camera_permission_tips">请前往设置->应用->权限管理中打开app摄像头权限</string>
     <string name="micro_permission_tips">请前往设置->应用->权限管理中打开app麦克风权限</string>
-    <string name="network_error_retry">网络异常，推流中断请尝试重连</string>
+    <string name="network_error_retry">直播状态异常，推流中断尝试重连</string>
     <string name="network_error">网络异常，请检查你的网络</string>
-    <string name="servererror">服务器异常</string>
+    <string name="try_error">连接失败</string>
     <string name="exit_room">退出直播失败，请联系管理员</string>
+    <string name="operate_busy">操作繁忙，请过5分钟后再尝试</string>
     <string name="fps">帧率</string>
     <string name="fps_hint">15~60之间取整</string>
     <string name="min_bitrate">最小码率</string>
@@ -97,4 +98,6 @@
     <string name="param">直播参数设置</string>
     <string name="resolution">分辨率</string>
     <string name="network">网络环境</string>
+    <string name="input_account">请输入账号</string>
+    <string name="input_passwd">请输入密码</string>
 </resources>

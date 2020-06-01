@@ -43,46 +43,47 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
 
 
     public void startLive() {
-        HttpUtils.isRoomLiveUsed(mRtmpUrl, new HttpUtils.NetWorkCall() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                getTarget().setRoomState(false);
-                if (!NetUtil.isNetworkAvailable(getTarget().getApplicationContext())) {
-                    Toast.makeText(getTarget().getApplicationContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getTarget().getApplicationContext(), R.string.servererror, Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onReponse(String response, int id) {
-                Log.e(TAG, response);
-                if (!TextUtils.isEmpty(response)) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        String result = jsonObject.optString("result");
-                        if (!"0".equals(result)) {
-                            getTarget().setRoomState(false);
-                            String msg = jsonObject.optString("msg");
-                            Toast.makeText(getTarget().getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        String use = jsonObject.optString("use");
-                       boolean isUse = "0".equals(use) ? false : true;
-                        if (isUse) {
-                            String brand = jsonObject.optString("brand");
-                            String deviceName = jsonObject.optString("device_name");
-                            Toast.makeText(getTarget().getApplicationContext(), "房间已经被" + brand + "(" + deviceName + ")" + "占用", Toast.LENGTH_SHORT).show();
-                            getTarget().setRoomState(false);
-                            return;
-                        }
-                        getTarget().startStream();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        getTarget().startStream();
+//        HttpUtils.isRoomLiveUsed(mRtmpUrl, new HttpUtils.NetWorkCall() {
+//            @Override
+//            public void onError(Call call, Exception e, int id) {
+//                getTarget().setRoomState(false);
+//                if (!NetUtil.isNetworkAvailable(getTarget().getApplicationContext())) {
+//                    Toast.makeText(getTarget().getApplicationContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(getTarget().getApplicationContext(), R.string.try_error, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onReponse(String response, int id) {
+//                Log.e(TAG, response);
+//                if (!TextUtils.isEmpty(response)) {
+//                    try {
+//                        JSONObject jsonObject = new JSONObject(response);
+//                        String result = jsonObject.optString("result");
+//                        if (!"0".equals(result)) {
+//                            getTarget().setRoomState(false);
+//                            String msg = jsonObject.optString("msg");
+//                            Toast.makeText(getTarget().getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
+//                        String use = jsonObject.optString("use");
+//                       boolean isUse = "0".equals(use) ? false : true;
+//                        if (isUse) {
+//                            String brand = jsonObject.optString("brand");
+//                            String deviceName = jsonObject.optString("device_name");
+//                            Toast.makeText(getTarget().getApplicationContext(), "房间已经被" + brand + "(" + deviceName + ")" + "占用", Toast.LENGTH_SHORT).show();
+//                            getTarget().setRoomState(false);
+//                            return;
+//                        }
+//                        getTarget().startStream();
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
     }
 
     public void closeLiveRoom(boolean isExit){
@@ -131,6 +132,11 @@ public class LivePresenter extends BasePresenter<LiveActivity> implements NetWok
     @Override
     public void onStart() {
         super.onStart();
+        //如果之前的流中断流再次回到app时从新加载流
+        if(getTarget().isStreamInterupt()&& NetUtil.isNetworkAvailable(getContext())){
+            getTarget().startLive();
+            return;
+        }
         if(getTarget().isRecording()){
             getTarget().openRoom();
         }

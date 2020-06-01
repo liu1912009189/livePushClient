@@ -116,7 +116,6 @@ public class MyRenderer implements GLSurfaceView.Renderer, SurfaceTexture.OnFram
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         startCameraPreview();
         if(isCameraOpen) {
-
             if (mRenderScreen == null) {
                 initScreenTexture();
             }
